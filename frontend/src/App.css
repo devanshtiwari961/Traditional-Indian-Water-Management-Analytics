@@ -1,0 +1,138 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7f6;
+  color: #1f2933;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.header {
+  background-color: #1f5f5b;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.header p {
+  font-size: 17px;
+}
+
+/* ===============================
+   NAVIGATION
+================================ */
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  background-color: white;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #1f5f5b;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   MAIN CONTENT
+================================ */
+
+main {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.page {
+  background-color: white;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.page h2 {
+  color: #1f5f5b;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.page p {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ===============================
+   STRUCTURE CARDS
+================================ */
+
+.structure-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.structure-card {
+  background-color: #f8faf9;
+  border: 1px solid #dce7e5;
+  border-radius: 10px;
+  padding: 22px;
+  transition: transform 0.2s ease;
+}
+
+.structure-card:hover {
+  transform: translateY(-3px);
+}
+
+.structure-card h3 {
+  color: #1f5f5b;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.structure-card p {
+  font-size: 15px;
+  margin-bottom: 7px;
+  line-height: 1.5;
+}
+
+.structure-card hr {
+  display: none;
+}
+
+/* ===============================
+   TOTAL STRUCTURES
+================================ */
+
+.total-count {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1f5f5b;
+}
