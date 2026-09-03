@@ -1,0 +1,2 @@
+algorithm,best_k,silhouette_score,features_used,records
+K-Means,8,0.6395,"annual_rainfall_mm_est, latitude, longitude",150

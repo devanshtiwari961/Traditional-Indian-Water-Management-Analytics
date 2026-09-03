@@ -346,7 +346,7 @@ function MapPage() {
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
-            attribution='&copy; OpenStreetMap contributors'
+            attribution="&copy; OpenStreetMap contributors"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
@@ -443,15 +443,14 @@ function Analytics() {
     );
   }
 
-  // -------------------------
-  // Structures by Type
-  // -------------------------
+  // =========================
+  // BASIC COUNTS
+  // =========================
 
   const typeCounts = {};
 
   structures.forEach((structure) => {
     const type = structure.system_type || "Unknown";
-
     typeCounts[type] = (typeCounts[type] || 0) + 1;
   });
 
@@ -463,15 +462,10 @@ function Analytics() {
     .sort((a, b) => b.count - a.count);
 
 
-  // -------------------------
-  // Structures by State
-  // -------------------------
-
   const stateCounts = {};
 
   structures.forEach((structure) => {
-    const state =
-      structure.state_or_region || "Unknown";
+    const state = structure.state_or_region || "Unknown";
 
     stateCounts[state] =
       (stateCounts[state] || 0) + 1;
@@ -485,9 +479,9 @@ function Analytics() {
     .sort((a, b) => b.count - a.count);
 
 
-  // -------------------------
-  // Rainfall Distribution
-  // -------------------------
+  // =========================
+  // RAINFALL ANALYSIS
+  // =========================
 
   const rainfallRanges = {
     "< 500 mm": 0,
@@ -527,9 +521,188 @@ function Analytics() {
   }));
 
 
-  // -------------------------
-  // Average Rainfall
-  // -------------------------
+  // =========================
+  // PURPOSE ANALYSIS
+  // =========================
+
+  const purposeCounts = {};
+
+  structures.forEach((structure) => {
+    const purpose =
+      structure.primary_purpose || "Not available";
+
+    purposeCounts[purpose] =
+      (purposeCounts[purpose] || 0) + 1;
+  });
+
+  const purposeData = Object.entries(purposeCounts)
+    .map(([purpose, count]) => ({
+      purpose,
+      count,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+
+
+  // =========================
+  // CONDITION ANALYSIS
+  // =========================
+
+  const conditionCounts = {};
+
+  structures.forEach((structure) => {
+    const condition =
+      structure.current_condition || "Not available";
+
+    conditionCounts[condition] =
+      (conditionCounts[condition] || 0) + 1;
+  });
+
+  const conditionData = Object.entries(conditionCounts)
+    .map(([condition, count]) => ({
+      condition,
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+
+  // =========================
+  // COMMUNITY MANAGEMENT
+  // =========================
+
+  const communityCounts = {};
+
+  structures.forEach((structure) => {
+    const management =
+      structure.community_management ||
+      "Not available";
+
+    communityCounts[management] =
+      (communityCounts[management] || 0) + 1;
+  });
+
+  const communityData = Object.entries(
+    communityCounts
+  )
+    .map(([management, count]) => ({
+      management,
+      count,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+
+
+  // =========================
+  // SUSTAINABILITY SCORE
+  // =========================
+
+  const sustainabilityRanges = {
+    "0–20": 0,
+    "21–40": 0,
+    "41–60": 0,
+    "61–80": 0,
+    "81–100": 0,
+  };
+
+  const sustainabilityValues = [];
+
+  structures.forEach((structure) => {
+    const score = Number(
+      structure.sustainability_score
+    );
+
+    if (Number.isNaN(score)) {
+      return;
+    }
+
+    sustainabilityValues.push(score);
+
+    if (score <= 20) {
+      sustainabilityRanges["0–20"]++;
+    } else if (score <= 40) {
+      sustainabilityRanges["21–40"]++;
+    } else if (score <= 60) {
+      sustainabilityRanges["41–60"]++;
+    } else if (score <= 80) {
+      sustainabilityRanges["61–80"]++;
+    } else {
+      sustainabilityRanges["81–100"]++;
+    }
+  });
+
+  const sustainabilityData = Object.entries(
+    sustainabilityRanges
+  ).map(([range, count]) => ({
+    range,
+    count,
+  }));
+
+  const averageSustainability =
+    sustainabilityValues.length > 0
+      ? sustainabilityValues.reduce(
+        (sum, value) => sum + value,
+        0
+      ) / sustainabilityValues.length
+      : 0;
+
+
+  // =========================
+  // CLIMATE RESILIENCE SCORE
+  // =========================
+
+  const resilienceRanges = {
+    "0–20": 0,
+    "21–40": 0,
+    "41–60": 0,
+    "61–80": 0,
+    "81–100": 0,
+  };
+
+  const resilienceValues = [];
+
+  structures.forEach((structure) => {
+    const score = Number(
+      structure.climate_resilience_score
+    );
+
+    if (Number.isNaN(score)) {
+      return;
+    }
+
+    resilienceValues.push(score);
+
+    if (score <= 20) {
+      resilienceRanges["0–20"]++;
+    } else if (score <= 40) {
+      resilienceRanges["21–40"]++;
+    } else if (score <= 60) {
+      resilienceRanges["41–60"]++;
+    } else if (score <= 80) {
+      resilienceRanges["61–80"]++;
+    } else {
+      resilienceRanges["81–100"]++;
+    }
+  });
+
+  const resilienceData = Object.entries(
+    resilienceRanges
+  ).map(([range, count]) => ({
+    range,
+    count,
+  }));
+
+  const averageResilience =
+    resilienceValues.length > 0
+      ? resilienceValues.reduce(
+        (sum, value) => sum + value,
+        0
+      ) / resilienceValues.length
+      : 0;
+
+
+  // =========================
+  // AVERAGE RAINFALL
+  // =========================
 
   const rainfallValues = structures
     .map((structure) =>
@@ -540,9 +713,9 @@ function Analytics() {
   const averageRainfall =
     rainfallValues.length > 0
       ? rainfallValues.reduce(
-          (sum, value) => sum + value,
-          0
-        ) / rainfallValues.length
+        (sum, value) => sum + value,
+        0
+      ) / rainfallValues.length
       : 0;
 
 
@@ -551,9 +724,17 @@ function Analytics() {
       <h2>Analytics Dashboard</h2>
 
       <p>
-        This dashboard summarizes the traditional Indian
-        water-management structures available in the dataset.
+        This dashboard provides exploratory analysis of
+        traditional Indian water-management structures in the
+        prototype dataset.
       </p>
+
+      <div className="recommendation-note">
+        <strong>Analytical note:</strong> The charts describe
+        patterns present in the current prototype dataset.
+        They should not be interpreted as definitive historical,
+        hydrological or engineering conclusions.
+      </div>
 
 
       {/* =========================
@@ -570,116 +751,75 @@ function Analytics() {
           marginBottom: "40px",
         }}
       >
-        <div
-          style={{
-            padding: "25px",
-            background: "#f8faf9",
-            border: "1px solid #dce7e5",
-            borderRadius: "10px",
-            textAlign: "center",
-          }}
-        >
+        <div className="analytics-card">
           <h3>Total Structures</h3>
 
-          <p
-            style={{
-              fontSize: "32px",
-              fontWeight: "bold",
-              color: "#1f5f5b",
-            }}
-          >
+          <p className="number">
             {structures.length}
           </p>
         </div>
 
-
-        <div
-          style={{
-            padding: "25px",
-            background: "#f8faf9",
-            border: "1px solid #dce7e5",
-            borderRadius: "10px",
-            textAlign: "center",
-          }}
-        >
+        <div className="analytics-card">
           <h3>Structure Types</h3>
 
-          <p
-            style={{
-              fontSize: "32px",
-              fontWeight: "bold",
-              color: "#1f5f5b",
-            }}
-          >
+          <p className="number">
             {typeData.length}
           </p>
         </div>
 
-
-        <div
-          style={{
-            padding: "25px",
-            background: "#f8faf9",
-            border: "1px solid #dce7e5",
-            borderRadius: "10px",
-            textAlign: "center",
-          }}
-        >
+        <div className="analytics-card">
           <h3>States/Regions</h3>
 
-          <p
-            style={{
-              fontSize: "32px",
-              fontWeight: "bold",
-              color: "#1f5f5b",
-            }}
-          >
+          <p className="number">
             {stateData.length}
           </p>
         </div>
 
-
-        <div
-          style={{
-            padding: "25px",
-            background: "#f8faf9",
-            border: "1px solid #dce7e5",
-            borderRadius: "10px",
-            textAlign: "center",
-          }}
-        >
+        <div className="analytics-card">
           <h3>Avg. Rainfall</h3>
 
-          <p
-            style={{
-              fontSize: "32px",
-              fontWeight: "bold",
-              color: "#1f5f5b",
-            }}
-          >
+          <p className="number">
             {averageRainfall.toFixed(0)}
           </p>
 
           <p>mm/year</p>
         </div>
+
+        <div className="analytics-card">
+          <h3>Avg. Sustainability</h3>
+
+          <p className="number">
+            {averageSustainability.toFixed(1)}
+          </p>
+
+          <p>score</p>
+        </div>
+
+        <div className="analytics-card">
+          <h3>Avg. Climate Resilience</h3>
+
+          <p className="number">
+            {averageResilience.toFixed(1)}
+          </p>
+
+          <p>score</p>
+        </div>
       </div>
 
 
       {/* =========================
-          CHART 1
+          ANALYSIS 1
       ========================= */}
 
-      <div style={{ marginBottom: "50px" }}>
-        <h3
-          style={{
-            color: "#1f5f5b",
-            marginBottom: "20px",
-          }}
-        >
-          Structures by Type
-        </h3>
+      <div className="chart-container">
+        <h3>1. Structures by Type</h3>
 
-        <div style={{ width: "100%", height: "400px" }}>
+        <p style={{ marginBottom: "20px" }}>
+          Distribution of traditional water-management
+          structure types represented in the dataset.
+        </p>
+
+        <div style={{ width: "100%", height: "450px" }}>
           <ResponsiveContainer>
             <BarChart data={typeData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -688,7 +828,7 @@ function Analytics() {
                 dataKey="type"
                 angle={-20}
                 textAnchor="end"
-                height={80}
+                height={100}
               />
 
               <YAxis />
@@ -708,20 +848,18 @@ function Analytics() {
 
 
       {/* =========================
-          CHART 2
+          ANALYSIS 2
       ========================= */}
 
-      <div style={{ marginBottom: "50px" }}>
-        <h3
-          style={{
-            color: "#1f5f5b",
-            marginBottom: "20px",
-          }}
-        >
-          Structures by State/Region
-        </h3>
+      <div className="chart-container">
+        <h3>2. Structures by State/Region</h3>
 
-        <div style={{ width: "100%", height: "450px" }}>
+        <p style={{ marginBottom: "20px" }}>
+          Geographic distribution of records across states
+          and regions represented in the prototype dataset.
+        </p>
+
+        <div style={{ width: "100%", height: "500px" }}>
           <ResponsiveContainer>
             <BarChart
               data={stateData}
@@ -738,7 +876,7 @@ function Analytics() {
               <YAxis
                 type="category"
                 dataKey="state"
-                width={120}
+                width={130}
               />
 
               <Tooltip />
@@ -756,18 +894,16 @@ function Analytics() {
 
 
       {/* =========================
-          CHART 3
+          ANALYSIS 3
       ========================= */}
 
-      <div>
-        <h3
-          style={{
-            color: "#1f5f5b",
-            marginBottom: "20px",
-          }}
-        >
-          Annual Rainfall Range Distribution
-        </h3>
+      <div className="chart-container">
+        <h3>3. Annual Rainfall Range Distribution</h3>
+
+        <p style={{ marginBottom: "20px" }}>
+          Number of structures associated with different
+          annual rainfall ranges.
+        </p>
 
         <div style={{ width: "100%", height: "400px" }}>
           <ResponsiveContainer>
@@ -790,25 +926,683 @@ function Analytics() {
           </ResponsiveContainer>
         </div>
       </div>
+
+
+      {/* =========================
+          ANALYSIS 4
+      ========================= */}
+
+      <div className="chart-container">
+        <h3>4. Primary Purpose Distribution</h3>
+
+        <p style={{ marginBottom: "20px" }}>
+          Distribution of the main purposes associated with
+          traditional water-management structures.
+        </p>
+
+        <div style={{ width: "100%", height: "500px" }}>
+          <ResponsiveContainer>
+            <BarChart
+              data={purposeData}
+              layout="vertical"
+              margin={{
+                left: 30,
+                right: 30,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis type="number" />
+
+              <YAxis
+                type="category"
+                dataKey="purpose"
+                width={180}
+              />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="count"
+                name="Number of Structures"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+
+      {/* =========================
+          ANALYSIS 5
+      ========================= */}
+
+      <div className="chart-container">
+        <h3>5. Current Condition Distribution</h3>
+
+        <p style={{ marginBottom: "20px" }}>
+          Exploratory view of the reported current condition
+          of the traditional water structures.
+        </p>
+
+        <div style={{ width: "100%", height: "400px" }}>
+          <ResponsiveContainer>
+            <BarChart data={conditionData}>
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis
+                dataKey="condition"
+                angle={-20}
+                textAnchor="end"
+                height={100}
+              />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="count"
+                name="Number of Structures"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+
+      {/* =========================
+          ANALYSIS 6
+      ========================= */}
+
+      <div className="chart-container">
+        <h3>6. Community Management Distribution</h3>
+
+        <p style={{ marginBottom: "20px" }}>
+          Distribution of community-management approaches
+          recorded for the structures.
+        </p>
+
+        <div style={{ width: "100%", height: "500px" }}>
+          <ResponsiveContainer>
+            <BarChart
+              data={communityData}
+              layout="vertical"
+              margin={{
+                left: 30,
+                right: 30,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis type="number" />
+
+              <YAxis
+                type="category"
+                dataKey="management"
+                width={180}
+              />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="count"
+                name="Number of Structures"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+
+      {/* =========================
+          ANALYSIS 7
+      ========================= */}
+
+      <div className="chart-container">
+        <h3>7. Sustainability Score Distribution</h3>
+
+        <p style={{ marginBottom: "20px" }}>
+          Distribution of the sustainability scores currently
+          present in the prototype dataset.
+        </p>
+
+        <div style={{ width: "100%", height: "400px" }}>
+          <ResponsiveContainer>
+            <BarChart data={sustainabilityData}>
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis dataKey="range" />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="count"
+                name="Number of Structures"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+
+      {/* =========================
+          ANALYSIS 8
+      ========================= */}
+
+      <div className="chart-container">
+        <h3>8. Climate Resilience Score Distribution</h3>
+
+        <p style={{ marginBottom: "20px" }}>
+          Distribution of the climate-resilience scores
+          currently available in the prototype dataset.
+        </p>
+
+        <div style={{ width: "100%", height: "400px" }}>
+          <ResponsiveContainer>
+            <BarChart data={resilienceData}>
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis dataKey="range" />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="count"
+                name="Number of Structures"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+
+      {/* =========================
+          ANALYTICS SUMMARY
+      ========================= */}
+
+      <div
+        className="selected-structure"
+        style={{ marginTop: "40px" }}
+      >
+        <h3>Analytics Summary</h3>
+
+        <p>
+          <strong>Total records analyzed:</strong>{" "}
+          {structures.length}
+        </p>
+
+        <p>
+          <strong>Different structure types:</strong>{" "}
+          {typeData.length}
+        </p>
+
+        <p>
+          <strong>States/regions represented:</strong>{" "}
+          {stateData.length}
+        </p>
+
+        <p>
+          <strong>Average annual rainfall:</strong>{" "}
+          {averageRainfall.toFixed(0)} mm/year
+        </p>
+
+        <p>
+          <strong>Average sustainability score:</strong>{" "}
+          {averageSustainability.toFixed(1)}
+        </p>
+
+        <p>
+          <strong>Average climate resilience score:</strong>{" "}
+          {averageResilience.toFixed(1)}
+        </p>
+      </div>
     </div>
   );
 }
 
 
 // =========================
-// PATTERNS PAGE
+// PATTERNS & CLUSTERS PAGE
 // =========================
 
 function Patterns() {
+  const [structures, setStructures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCluster, setSelectedCluster] = useState("all");
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/structures")
+      .then((response) => response.json())
+      .then((data) => {
+        setStructures(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="page">
+        <h2>Patterns & Clusters</h2>
+        <p>Loading machine learning cluster results...</p>
+      </div>
+    );
+  }
+
+  // Group structures by cluster
+  const clusterGroups = {};
+
+  structures.forEach((structure) => {
+    if (
+      structure.cluster === undefined ||
+      structure.cluster === null
+    ) {
+      return;
+    }
+
+    const clusterId = Number(structure.cluster);
+
+    if (!clusterGroups[clusterId]) {
+      clusterGroups[clusterId] = [];
+    }
+
+    clusterGroups[clusterId].push(structure);
+  });
+
+  // Convert groups into summary objects
+  const clusterSummaries = Object.entries(clusterGroups)
+    .map(([clusterId, records]) => {
+      const rainfallValues = records
+        .map((record) =>
+          Number(record.annual_rainfall_mm)
+        )
+        .filter((value) => !Number.isNaN(value));
+
+      const averageRainfall =
+        rainfallValues.length > 0
+          ? rainfallValues.reduce(
+            (sum, value) => sum + value,
+            0
+          ) / rainfallValues.length
+          : 0;
+
+      const typeCounts = {};
+
+      records.forEach((record) => {
+        const type =
+          record.system_type || "Unknown";
+
+        typeCounts[type] =
+          (typeCounts[type] || 0) + 1;
+      });
+
+      const mainTypes = Object.entries(typeCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([type, count]) => ({
+          type,
+          count,
+        }));
+
+      const regions = [
+        ...new Set(
+          records
+            .map((record) => record.state_or_region)
+            .filter(Boolean)
+        ),
+      ];
+
+      const ecologicalRegions = [
+        ...new Set(
+          records
+            .map((record) => record.ecological_region)
+            .filter(Boolean)
+        ),
+      ];
+
+      const clusterName =
+        records[0]?.cluster_name ||
+        getClusterName(averageRainfall);
+
+      return {
+        clusterId: Number(clusterId),
+        clusterName,
+        count: records.length,
+        averageRainfall,
+        mainTypes,
+        regions,
+        ecologicalRegions,
+      };
+    })
+    .sort((a, b) => a.clusterId - b.clusterId);
+
+  const filteredClusters =
+    selectedCluster === "all"
+      ? clusterSummaries
+      : clusterSummaries.filter(
+        (cluster) =>
+          String(cluster.clusterId) ===
+          selectedCluster
+      );
+
+  const totalClusteredStructures =
+    clusterSummaries.reduce(
+      (sum, cluster) => sum + cluster.count,
+      0
+    );
+
+  const averageClusterRainfall =
+    clusterSummaries.length > 0
+      ? clusterSummaries.reduce(
+        (sum, cluster) =>
+          sum + cluster.averageRainfall,
+        0
+      ) / clusterSummaries.length
+      : 0;
+
   return (
     <div className="page">
       <h2>Patterns & Clusters</h2>
 
       <p>
-        Machine learning based clustering will be added here.
+        Machine learning clustering groups structures with
+        similar environmental and geographical characteristics.
+        The current prototype uses rainfall, latitude and
+        longitude as the main clustering features.
       </p>
+
+      <div className="recommendation-note">
+        <strong>Important:</strong> These clusters are analytical
+        patterns from the current prototype dataset. They should
+        not be interpreted as definitive historical classifications
+        or engineering recommendations.
+      </div>
+
+      {/* SUMMARY CARDS */}
+
+      <div className="analytics-grid">
+        <div className="analytics-card">
+          <h3>Total Clusters</h3>
+
+          <p className="number">
+            {clusterSummaries.length}
+          </p>
+        </div>
+
+        <div className="analytics-card">
+          <h3>Clustered Structures</h3>
+
+          <p className="number">
+            {totalClusteredStructures}
+          </p>
+        </div>
+
+        <div className="analytics-card">
+          <h3>Average Cluster Rainfall</h3>
+
+          <p className="number">
+            {averageClusterRainfall.toFixed(0)}
+          </p>
+
+          <p>mm/year</p>
+        </div>
+
+        <div className="analytics-card">
+          <h3>ML Method</h3>
+
+          <p
+            style={{
+              fontSize: "22px",
+              fontWeight: "bold",
+              color: "#1f5f5b",
+            }}
+          >
+            K-Means
+          </p>
+        </div>
+      </div>
+
+      {/* CLUSTER FILTER */}
+
+      <div className="filter-container">
+        <select
+          className="filter-select"
+          value={selectedCluster}
+          onChange={(e) =>
+            setSelectedCluster(e.target.value)
+          }
+        >
+          <option value="all">
+            Show All Clusters
+          </option>
+
+          {clusterSummaries.map((cluster) => (
+            <option
+              key={cluster.clusterId}
+              value={String(cluster.clusterId)}
+            >
+              Cluster {cluster.clusterId} —{" "}
+              {cluster.clusterName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* CLUSTER CARDS */}
+
+      <div className="cluster-grid">
+        {filteredClusters.map((cluster) => (
+          <div
+            className="cluster-card"
+            key={cluster.clusterId}
+          >
+            <h3>
+              Cluster {cluster.clusterId}
+            </h3>
+
+            <p>
+              <strong>Cluster Name:</strong>{" "}
+              {cluster.clusterName}
+            </p>
+
+            <p>
+              <strong>Structures:</strong>{" "}
+              {cluster.count}
+            </p>
+
+            <p>
+              <strong>Average Rainfall:</strong>{" "}
+              {cluster.averageRainfall.toFixed(0)} mm/year
+            </p>
+
+            <p>
+              <strong>Main Structure Types:</strong>
+            </p>
+
+            <ul
+              style={{
+                marginLeft: "20px",
+                marginBottom: "12px",
+              }}
+            >
+              {cluster.mainTypes.map(
+                (item) => (
+                  <li key={item.type}>
+                    {item.type} ({item.count})
+                  </li>
+                )
+              )}
+            </ul>
+
+            <p>
+              <strong>Regions Represented:</strong>
+            </p>
+
+            <p>
+              {cluster.regions.length > 0
+                ? cluster.regions.join(", ")
+                : "Not available"}
+            </p>
+
+            <p>
+              <strong>Ecological Regions:</strong>
+            </p>
+
+            <p>
+              {cluster.ecologicalRegions.length > 0
+                ? cluster.ecologicalRegions.join(", ")
+                : "Not available"}
+            </p>
+
+            <div
+              style={{
+                marginTop: "15px",
+                padding: "12px",
+                background: "#eef7f5",
+                borderRadius: "8px",
+              }}
+            >
+              <strong>Pattern Interpretation:</strong>
+
+              <p
+                style={{
+                  marginTop: "7px",
+                  marginBottom: "0",
+                }}
+              >
+                {getClusterDescription(
+                  cluster.clusterName,
+                  cluster.averageRainfall,
+                  cluster.mainTypes
+                )}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* CLUSTER RAINFALL CHART */}
+
+      {filteredClusters.length > 0 && (
+        <div
+          className="chart-container"
+          style={{ marginTop: "40px" }}
+        >
+          <h3>
+            Average Rainfall by Cluster
+          </h3>
+
+          <div
+            style={{
+              width: "100%",
+              height: "400px",
+            }}
+          >
+            <ResponsiveContainer>
+              <BarChart
+                data={filteredClusters.map(
+                  (cluster) => ({
+                    cluster:
+                      `Cluster ${cluster.clusterId}`,
+                    rainfall:
+                      Number(
+                        cluster.averageRainfall.toFixed(0)
+                      ),
+                  })
+                )}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+
+                <XAxis dataKey="cluster" />
+
+                <YAxis />
+
+                <Tooltip />
+
+                <Legend />
+
+                <Bar
+                  dataKey="rainfall"
+                  name="Average Rainfall (mm/year)"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
+
+
+// =========================
+// CLUSTER NAME HELPER
+// =========================
+
+function getClusterName(averageRainfall) {
+  if (averageRainfall < 500) {
+    return "Low Rainfall";
+  }
+
+  if (averageRainfall < 1000) {
+    return "Moderate Rainfall";
+  }
+
+  if (averageRainfall < 2000) {
+    return "High Rainfall";
+  }
+
+  return "Very High Rainfall";
+}
+
+
+// =========================
+// CLUSTER DESCRIPTION HELPER
+// =========================
+
+function getClusterDescription(
+  clusterName,
+  averageRainfall,
+  mainTypes
+) {
+  const typeNames = mainTypes
+    .slice(0, 3)
+    .map((item) => item.type)
+    .join(", ");
+
+  if (clusterName === "Low Rainfall") {
+    return `This cluster represents structures located in relatively low-rainfall environments. Common examples include ${typeNames || "traditional storage structures"}. The grouping suggests a geographical and rainfall-based pattern in the prototype dataset.`;
+  }
+
+  if (clusterName === "Moderate Rainfall") {
+    return `This cluster represents structures associated with moderate rainfall conditions. Common examples include ${typeNames || "traditional water-management structures"}. The grouping highlights traditional practices found across moderate-rainfall regions.`;
+  }
+
+  if (clusterName === "High Rainfall") {
+    return `This cluster represents structures associated with higher rainfall conditions. Common examples include ${typeNames || "traditional water-management structures"}. The grouping indicates a recurring environmental pattern within the dataset.`;
+  }
+
+  if (clusterName === "Very High Rainfall") {
+    return `This cluster represents structures located in very high-rainfall environments. Common examples include ${typeNames || "traditional water-management structures"}. The grouping highlights traditional practices associated with humid environments.`;
+  }
+
+  return `This cluster has an average rainfall of approximately ${averageRainfall.toFixed(0)} mm/year and contains examples such as ${typeNames || "traditional water-management structures"}.`;
 }
 
 
@@ -817,15 +1611,211 @@ function Patterns() {
 // =========================
 
 function Recommendations() {
+  const [structures, setStructures] = useState([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [recommendations, setRecommendations] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/structures")
+      .then((response) => response.json())
+      .then((data) => {
+        setStructures(data);
+
+        if (data.length > 0) {
+          setSelectedId(data[0].record_id);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  const selectedStructure = structures.find(
+    (structure) =>
+      structure.record_id === selectedId
+  );
+
+  useEffect(() => {
+    if (!selectedStructure) {
+      setRecommendations([]);
+      return;
+    }
+
+    const selectedRainfall = Number(
+      selectedStructure.annual_rainfall_mm
+    );
+
+    const selectedState =
+      selectedStructure.state_or_region;
+
+    const scored = structures
+      .filter(
+        (structure) =>
+          structure.record_id !== selectedStructure.record_id
+      )
+      .map((structure) => {
+        const rainfall = Number(
+          structure.annual_rainfall_mm
+        );
+
+        let score = 0;
+
+        if (
+          !Number.isNaN(selectedRainfall) &&
+          !Number.isNaN(rainfall)
+        ) {
+          const difference = Math.abs(
+            selectedRainfall - rainfall
+          );
+
+          score += Math.max(
+            0,
+            100 - difference / 20
+          );
+        }
+
+        if (
+          structure.state_or_region === selectedState
+        ) {
+          score += 20;
+        }
+
+        if (
+          structure.system_type ===
+          selectedStructure.system_type
+        ) {
+          score += 20;
+        }
+
+        return {
+          ...structure,
+          similarityScore: Math.min(
+            100,
+            Math.round(score)
+          ),
+        };
+      })
+      .sort(
+        (a, b) =>
+          b.similarityScore -
+          a.similarityScore
+      )
+      .slice(0, 3);
+
+    setRecommendations(scored);
+  }, [selectedStructure, structures]);
+
   return (
     <div className="page">
       <h2>Recommendations</h2>
 
       <p>
-        The recommendation engine will identify traditional
-        water-management practices that may be suitable for
-        similar environmental conditions.
+        The recommendation engine identifies historical
+        water-management practices that may be relevant to
+        structures with similar environmental characteristics.
       </p>
+
+      <div className="recommendation-section">
+        <h3>Select a Structure</h3>
+
+        <select
+          className="structure-select"
+          value={selectedId}
+          onChange={(e) =>
+            setSelectedId(e.target.value)
+          }
+        >
+          {structures.map((structure) => (
+            <option
+              key={structure.record_id}
+              value={structure.record_id}
+            >
+              {structure.system_name} —{" "}
+              {structure.system_type}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {selectedStructure && (
+        <div className="selected-structure">
+          <h3>Selected Structure</h3>
+
+          <p>
+            <strong>Name:</strong>{" "}
+            {selectedStructure.system_name}
+          </p>
+
+          <p>
+            <strong>Type:</strong>{" "}
+            {selectedStructure.system_type}
+          </p>
+
+          <p>
+            <strong>State/Region:</strong>{" "}
+            {selectedStructure.state_or_region}
+          </p>
+
+          <p>
+            <strong>Annual Rainfall:</strong>{" "}
+            {selectedStructure.annual_rainfall_mm ||
+              "Not available"}{" "}
+            mm
+          </p>
+        </div>
+      )}
+
+      <div className="recommendation-section">
+        <h3>Similar Historical Cases</h3>
+
+        <div className="recommendation-grid">
+          {recommendations.map(
+            (recommendation) => (
+              <div
+                className="recommendation-card"
+                key={recommendation.record_id}
+              >
+                <h4>
+                  {recommendation.system_name}
+                </h4>
+
+                <p>
+                  <strong>Similarity:</strong>{" "}
+                  {recommendation.similarityScore}%
+                </p>
+
+                <p>
+                  <strong>Type:</strong>{" "}
+                  {recommendation.system_type}
+                </p>
+
+                <p>
+                  <strong>State/Region:</strong>{" "}
+                  {recommendation.state_or_region}
+                </p>
+
+                <p>
+                  <strong>Rainfall:</strong>{" "}
+                  {recommendation.annual_rainfall_mm ||
+                    "Not available"}{" "}
+                  mm
+                </p>
+
+                <p>
+                  <strong>Water Principle:</strong>{" "}
+                  {recommendation.water_harvesting_principle ||
+                    "Not available"}
+                </p>
+              </div>
+            )
+          )}
+        </div>
+      </div>
+
+      <div className="recommendation-note">
+        <strong>Note:</strong> Recommendations are historical
+        comparisons based on similarity in the prototype dataset.
+        They are not engineering approvals or construction
+        instructions.
+      </div>
     </div>
   );
 }
@@ -877,7 +1867,6 @@ function App() {
           </p>
         </header>
 
-
         <nav className="navbar">
           <Link to="/">Home</Link>
 
@@ -906,10 +1895,8 @@ function App() {
           </Link>
         </nav>
 
-
         <main>
           <Routes>
-
             <Route
               path="/"
               element={<Home />}
@@ -944,7 +1931,6 @@ function App() {
               path="/about"
               element={<About />}
             />
-
           </Routes>
         </main>
 

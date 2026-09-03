@@ -1,0 +1,9 @@
+cluster,structures,average_rainfall,min_rainfall,max_rainfall,average_latitude,average_longitude,cluster_name
+0,50,453.08,251,722,25.8496,72.8085,Cluster 0 - Low Rainfall
+1,30,780.3,651,937,14.125,77.499,Cluster 1 - Moderate Rainfall
+2,15,2130.87,1511,2486,26.2336,93.2355,Cluster 2 - Very High Rainfall
+3,10,2525.8,1843,2998,10.8438,76.2861,Cluster 3 - Very High Rainfall
+4,5,2998.8,2508,3349,11.6732,92.732,Cluster 4 - Very High Rainfall
+5,5,1169.6,1012,1267,24.789,85.033,Cluster 5 - High Rainfall
+6,25,790.6,653,936,21.1677,76.3979,Cluster 6 - Moderate Rainfall
+7,10,701.2,89,1510,32.9377,77.3743,Cluster 7 - Moderate Rainfall

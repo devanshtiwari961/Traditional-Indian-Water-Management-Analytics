@@ -29,6 +29,7 @@ const structureSchema = new mongoose.Schema(
                 enum: ["Point"],
                 default: "Point",
             },
+
             coordinates: {
                 type: [Number],
                 required: true,
@@ -122,13 +123,36 @@ const structureSchema = new mongoose.Schema(
         source_reference: {
             type: String,
         },
+
+        // ==========================================
+        // MACHINE LEARNING CLUSTER INFORMATION
+        // ==========================================
+
+        cluster: {
+            type: Number,
+        },
+
+        cluster_name: {
+            type: String,
+        },
     },
+
     {
         timestamps: true,
     }
 );
 
-// Allows MongoDB to perform geographic queries later
-structureSchema.index({ location: "2dsphere" });
 
-module.exports = mongoose.model("Structure", structureSchema);
+// ==========================================
+// GEOJSON SPATIAL INDEX
+// ==========================================
+
+structureSchema.index({
+    location: "2dsphere",
+});
+
+
+module.exports = mongoose.model(
+    "Structure",
+    structureSchema
+);
